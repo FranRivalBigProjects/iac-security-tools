@@ -1,0 +1,1 @@
+const res=document.getElementById('res');function run(){res.innerText=policy.value.includes('allow')?'Valid policy':'Review policy';}

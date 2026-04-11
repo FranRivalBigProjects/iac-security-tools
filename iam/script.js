@@ -1,0 +1,1 @@
+const res=document.getElementById('res');function run(){let i=(iam.value.match(/\*/g)||[]).length;res.innerText=`Wildcard usage: ${i}`;}

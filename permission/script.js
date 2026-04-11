@@ -1,0 +1,1 @@
+const res=document.getElementById('res');function run(){let p=(config.value.match(/admin|write|full/gi)||[]).length;res.innerText=`High permissions: ${p}`;}

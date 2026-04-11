@@ -1,0 +1,1 @@
+const res=document.getElementById('res');function run(){let s=(code.value.match(/token|key|secret|password/gi)||[]).length;res.innerText=`Exposures: ${s}`;}

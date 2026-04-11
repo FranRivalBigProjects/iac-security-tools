@@ -1,0 +1,1 @@
+const res=document.getElementById('res');function run(){let r=(config.value.match(/sudo|root|password/gi)||[]).length;res.innerText=`Risks: ${r}`;}

@@ -1,0 +1,1 @@
+const res=document.getElementById('res');function run(){let r=(config.value.match(/0.0.0.0|public|open/gi)||[]).length;res.innerText=`Risks: ${r}`;}
