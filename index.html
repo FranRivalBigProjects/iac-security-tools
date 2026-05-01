@@ -1,115 +1,1031 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>IaC Security Tools – Terraform, IAM & Secrets Management</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google-site-verification" content="PkLa_ViOo6FAHpvh8SacceMb95o9tePRdrqLNBz9X1M" />
+<meta name="robots" content="index, follow">
 
-  <!-- Google verification -->
-  <meta name="google-site-verification" content="PkLa_ViOo6FAHpvh8SacceMb95o9tePRdrqLNBz9X1M" />
+<title>IaC Security Tools – Free Terraform Security Scanner &amp; Infrastructure as Code Checker</title>
 
-  <!-- SEO -->
-  <meta name="description" content="Infrastructure as Code security tools for analyzing IAM policies, permissions, secrets management, and Terraform security issues in DevOps environments.">
-  <meta name="keywords" content="terraform security tools, iam policy analyzer, secrets management devops, ansible security issues, iac security best practices, cloud permission analyzer">
+<meta name="description" content="Free IaC security tools. Paste Terraform HCL to scan for open ports, overly permissive IAM policies, public S3 buckets, missing encryption, and infrastructure misconfigurations. Covers Checkov, tfsec, and IaC security best practices.">
 
-  <!-- AdSense -->
-  <meta name="google-adsense-account" content="ca-pub-XXXXXXXXXXXXXXXX">
+<meta name="keywords" content="iac security tools, terraform security scanner, infrastructure as code security, terraform misconfiguration checker, iac scanning tools, checkov tfsec, terraform security best practices, iac security checker, terraform iam security, s3 bucket security terraform">
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="IaC Security Tools – DevOps Security & Policy Analysis">
-  <meta property="og:description" content="Analyze IAM policies, permissions, secrets, and Terraform security risks in infrastructure code.">
-  <meta property="og:type" content="website">
+<link rel="canonical" href="https://franrivalbigprojects.github.io/iac-security-tools/">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #020617;
-      color: #e2e8f0;
-      margin: 0;
-      padding: 40px;
-    }
-    h1 {
-      color: #f87171;
-    }
-    p {
-      max-width: 900px;
-      line-height: 1.6;
-    }
-    .tools {
-      margin-top: 30px;
-    }
-    .tool {
-      background: #1e293b;
-      padding: 14px;
-      margin-bottom: 12px;
-      border-radius: 8px;
-      transition: 0.2s;
-    }
-    .tool:hover {
-      background: #334155;
-    }
-    a {
-      color: #22c55e;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-  </style>
+<meta property="og:title" content="IaC Security Tools – Free Terraform Security Scanner">
+<meta property="og:description" content="Paste Terraform HCL to detect open ports, overly permissive IAM, public S3 buckets, missing encryption. IaC security guide and tool comparison.">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #070406;
+  --surface: #100810;
+  --surface2: #180c18;
+  --border: #261428;
+  --border2: #342038;
+  --iac: #e879f9;
+  --iac-dim: rgba(232,121,249,0.12);
+  --iac-dim2: rgba(232,121,249,0.05);
+  --iac-glow: rgba(232,121,249,0.18);
+  --red: #f87171;
+  --red-dim: rgba(248,113,113,0.1);
+  --orange: #fb923c;
+  --orange-dim: rgba(251,146,60,0.08);
+  --yellow: #fbbf24;
+  --yellow-dim: rgba(251,191,36,0.08);
+  --green: #22c55e;
+  --green-dim2: rgba(34,197,94,0.05);
+  --blue: #60a5fa;
+  --blue-dim: rgba(96,165,250,0.08);
+  --text: #d4b8e0;
+  --text-muted: #5a3870;
+  --text-dim: #201030;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Inter', sans-serif;
+  --r: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 44px 44px;
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 0;
+}
+
+header {
+  border-bottom: 1px solid var(--border2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(7,4,6,0.97);
+  backdrop-filter: blur(12px);
+}
+
+.header-inner {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.logo-pill {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--iac);
+  background: var(--iac-dim2);
+  border: 1px solid rgba(232,121,249,0.3);
+  border-radius: 3px;
+  padding: 3px 9px;
+}
+
+.logo-text { font-family: var(--mono); font-size: 12px; color: var(--text-muted); }
+.logo-text strong { color: var(--iac); font-weight: 500; }
+
+.wrapper {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero {
+  padding: 48px 0 28px;
+  border-bottom: 1px solid var(--border2);
+  margin-bottom: 22px;
+}
+
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--iac);
+  margin-bottom: 12px;
+  opacity: 0.8;
+}
+
+h1 {
+  font-size: clamp(22px, 3.2vw, 30px);
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 10px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+h1 em { font-style: normal; color: var(--iac); }
+
+.hero-sub {
+  font-size: 15px;
+  color: var(--text-muted);
+  max-width: 640px;
+  line-height: 1.75;
+  margin-bottom: 16px;
+}
+
+.hero-sub strong { color: var(--text); }
+
+.pill-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.pill {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: 3px;
+  border: 1px solid;
+}
+.pill-i  { color: var(--iac); background: var(--iac-dim2); border-color: rgba(232,121,249,0.3); }
+.pill-dim { color: var(--text-muted); border-color: var(--border2); }
+
+/* TOOL */
+.tool-shell {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.tool-topbar {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border2);
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.topbar-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.btn-sm {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid;
+  background: transparent;
+  transition: opacity 0.15s;
+}
+.btn-sm:hover { opacity: 0.75; }
+.btn-iac   { color: var(--iac); border-color: rgba(232,121,249,0.3); background: var(--iac-dim2); }
+.btn-ghost { color: var(--text-muted); border-color: var(--border2); }
+
+/* SPLIT */
+.editor-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 360px;
+}
+
+.pane-left {
+  border-right: 1px solid var(--border2);
+  display: flex;
+  flex-direction: column;
+}
+
+.pane-head {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-dim);
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--border2);
+  background: var(--surface2);
+  display: flex;
+  justify-content: space-between;
+}
+
+.hcl-textarea {
+  flex: 1;
+  width: 100%;
+  min-height: 310px;
+  padding: 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.65;
+  background: var(--bg);
+  border: none;
+  color: var(--text);
+  resize: none;
+  tab-size: 2;
+}
+.hcl-textarea:focus { outline: none; }
+
+.pane-right {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#resultsPane {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  min-height: 310px;
+}
+
+.idle-msg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 280px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  text-align: center;
+  gap: 8px;
+}
+
+.action-bar {
+  padding: 12px 18px;
+  border-top: 1px solid var(--border2);
+  background: var(--surface2);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-scan {
+  padding: 10px 26px;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--iac);
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 0 14px var(--iac-glow);
+  transition: opacity 0.15s;
+}
+.btn-scan:hover { opacity: 0.87; }
+
+/* RESULTS */
+.sum-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.sum-chip {
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 5px;
+  padding: 6px 10px;
+  text-align: center;
+  min-width: 54px;
+}
+
+.sc-val { font-family: var(--mono); font-size: 16px; font-weight: 600; line-height: 1; display: block; margin-bottom: 2px; }
+.sc-lbl { font-family: var(--mono); font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.07em; }
+
+.finding {
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-left: 3px solid;
+  border-radius: 0 var(--r) var(--r) 0;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.f-critical { border-left-color: var(--red); }
+.f-high     { border-left-color: var(--orange); }
+.f-medium   { border-left-color: var(--yellow); }
+.f-info     { border-left-color: var(--blue); }
+.f-pass     { border-left-color: var(--green); }
+
+.f-head { display: flex; align-items: center; gap: 7px; margin-bottom: 2px; }
+.f-badge {
+  font-size: 9px; padding: 1px 6px; border-radius: 2px; border: 1px solid;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.fb-critical { color: var(--red);    background: var(--red-dim);   border-color: rgba(248,113,113,0.2); }
+.fb-high     { color: var(--orange); background: var(--orange-dim);border-color: rgba(251,146,60,0.2); }
+.fb-medium   { color: var(--yellow); background: var(--yellow-dim);border-color: rgba(251,191,36,0.2); }
+.fb-info     { color: var(--blue);   background: var(--blue-dim);  border-color: rgba(96,165,250,0.2); }
+.fb-pass     { color: var(--green);  background: var(--green-dim2);border-color: rgba(34,197,94,0.2); }
+
+.f-title { font-weight: 600; color: var(--text); font-size: 11px; }
+.f-body  { color: var(--text-muted); font-size: 11px; line-height: 1.5; }
+
+/* TOOLS TABLE */
+.tools-table {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.tt-row {
+  display: grid;
+  grid-template-columns: 130px 80px 1fr 100px;
+  border-bottom: 1px solid var(--border2);
+}
+
+.tt-row:last-child { border-bottom: none; }
+.tt-row.tt-head { background: var(--surface2); }
+.tt-row:hover:not(.tt-head) { background: rgba(232,121,249,0.02); }
+
+.tt-cell {
+  padding: 9px 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  border-right: 1px solid var(--border2);
+}
+
+.tt-cell:last-child { border-right: none; }
+.tt-head .tt-cell { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; }
+.tt-name { color: var(--iac); font-weight: 600; }
+
+.badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  border: 1px solid;
+}
+.b-free  { color: var(--green); background: var(--green-dim2); border-color: rgba(34,197,94,0.25); }
+.b-paid  { color: var(--orange);background: var(--orange-dim); border-color: rgba(251,146,60,0.2); }
+.b-both  { color: var(--blue);  background: var(--blue-dim);  border-color: rgba(96,165,250,0.2); }
+
+/* SECTION */
+hr.divider { border: none; border-top: 1px solid var(--border2); margin: 50px 0; }
+.content-section { margin-bottom: 50px; }
+
+.sec-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.sec-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--iac);
+  white-space: nowrap;
+  opacity: 0.7;
+}
+
+.sec-rule { flex: 1; height: 1px; background: var(--border2); }
+
+p { font-size: 14px; color: var(--text-muted); line-height: 1.8; margin-bottom: 10px; max-width: 820px; }
+p strong { color: var(--text); }
+
+code {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--surface2);
+  color: var(--iac);
+  padding: 2px 7px;
+  border-radius: 3px;
+  border: 1px solid var(--border2);
+}
+
+.dense-block {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 22px;
+  margin-top: 14px;
+}
+
+.dense-block p { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border2); max-width: none; }
+.dense-block p:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+.faq-list {
+  margin-top: 14px;
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+
+.faq-item { border-bottom: 1px solid var(--border2); }
+.faq-item:last-child { border-bottom: none; }
+
+.faq-q {
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  border: none;
+  padding: 13px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  font-family: var(--sans);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  transition: background 0.15s;
+}
+
+.faq-q:hover { background: var(--iac-dim2); }
+.faq-arrow { font-family: var(--mono); font-size: 11px; color: var(--text-dim); transition: transform 0.2s; flex-shrink: 0; }
+.faq-item.open .faq-arrow { transform: rotate(180deg); }
+
+.faq-a {
+  display: none;
+  padding: 0 18px 13px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.75;
+  border-top: 1px solid var(--border2);
+  background: var(--bg);
+}
+
+.faq-item.open .faq-a { display: block; }
+.faq-a code { color: var(--iac); background: var(--iac-dim2); }
+
+.subtools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.stl {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 12px 14px;
+  text-decoration: none;
+  display: block;
+  transition: border-color 0.15s;
+}
+
+.stl:hover { border-color: rgba(232,121,249,0.3); }
+.stl-eye  { font-family: var(--mono); font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
+.stl-name { font-family: var(--mono); font-size: 12px; color: var(--iac); font-weight: 500; }
+
+.tag-cloud { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 50px; }
+.tag {
+  font-family: var(--mono); font-size: 10px; color: var(--text-muted);
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 100px; padding: 4px 12px; cursor: default;
+}
+.tag:hover { color: var(--iac); border-color: rgba(232,121,249,0.3); }
+
+footer { border-top: 1px solid var(--border2); padding: 20px 0; position: relative; z-index: 1; }
+.footer-inner {
+  max-width: 1060px; margin: 0 auto; padding: 0 24px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 8px;
+}
+footer p { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin: 0; }
+
+@media (max-width: 640px) {
+  .editor-split { grid-template-columns: 1fr; }
+  .pane-left    { border-right: none; border-bottom: 1px solid var(--border2); }
+  .tt-row       { grid-template-columns: 100px 60px 1fr; }
+  .tt-row .tt-cell:last-child { display: none; }
+}
+</style>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"IaC Security Scanner","applicationCategory":"SecurityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free Infrastructure as Code security scanner. Paste Terraform HCL to detect security misconfigurations: open ports, overly permissive IAM policies, public S3 buckets, missing encryption, hardcoded secrets, and missing security groups. No upload required.","featureList":"Open port detection, IAM wildcard detection, S3 public access detection, hardcoded secrets, missing encryption, security group issues, Terraform misconfiguration scanning"}
+</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are the best IaC security tools?","acceptedAnswer":{"@type":"Answer","text":"Top IaC security tools: Checkov (free, open source, supports Terraform/CloudFormation/Kubernetes/Helm, 1000+ policies) — run checkov -d ./infrastructure. tfsec (free, Terraform-focused, fast) — run tfsec . Trivy (free, multi-purpose scanner including IaC) — run trivy config ./. Terrascan (free, supports multiple IaC types) — run terrascan scan. Snyk IaC (freemium, integrates with CI/CD). Prisma Cloud (paid, enterprise). KICS (free, Checkmarx open source). For CI/CD: run Checkov as a pre-commit hook or GitHub Action step to block misconfigurations before they deploy."}},{"@type":"Question","name":"What are the most common IaC security misconfigurations?","acceptedAnswer":{"@type":"Answer","text":"Most common Terraform/IaC security issues: (1) Overly permissive IAM policies — Action: '*', Resource: '*'. (2) Security groups with 0.0.0.0/0 on sensitive ports (22, 3389, 3306, 6379). (3) S3 buckets with public access enabled. (4) Storage not encrypted at rest (EBS, RDS, S3). (5) Hardcoded secrets or credentials in HCL code. (6) Missing HTTPS enforcement on load balancers. (7) No CloudTrail or audit logging enabled. (8) Database instances publicly accessible. (9) Missing MFA on IAM users. (10) VPCs without proper network segmentation."}}]}
+</script>
+
 </head>
+
 <body>
+<header>
+  <div class="header-inner">
+    <span class="logo-pill">IaC</span>
+    <span class="logo-text"><strong>iac</strong>-security-tools</span>
+  </div>
+</header>
 
-  <h1>IaC Security Tools</h1>
+<div class="wrapper">
 
-  <p>
-    A collection of Infrastructure as Code security tools designed for DevOps engineers,
-    cloud architects, and security teams. Analyze IAM policies, detect permission risks,
-    manage secrets securely, and identify vulnerabilities in Terraform and Ansible workflows.
-  </p>
+  <section class="hero">
+    <p class="hero-eyebrow">// Infrastructure as Code Security</p>
+    <h1><em>IaC Security Tools</em> —<br>Free Terraform Scanner &amp; Misconfiguration Checker</h1>
+    <p class="hero-sub">
+      Paste <strong>Terraform HCL</strong> to detect open ports, overly permissive IAM policies, public S3 buckets, missing encryption, and hardcoded secrets. Plus a guide to Checkov, tfsec, and IaC security best practices.
+    </p>
+    <div class="pill-row">
+      <span class="pill pill-i">IAM Wildcards</span>
+      <span class="pill pill-i">Open Ports</span>
+      <span class="pill pill-dim">S3 Public Access</span>
+      <span class="pill pill-dim">Missing Encryption</span>
+      <span class="pill pill-dim">Hardcoded Secrets</span>
+    </div>
+  </section>
 
-  <p>
-    These tools help prevent misconfigurations, reduce attack surface, and enforce
-    best practices in cloud infrastructure security.
-  </p>
+  <!-- TOOL -->
 
-  <div class="tools">
+  <div class="tool-shell">
+    <div class="tool-topbar">
+      <span class="topbar-label">// Terraform IaC Security Scanner</span>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-sm btn-iac" id="sampleBtn">Load Sample</button>
+        <button class="btn-sm btn-ghost" id="clearBtn">Clear</button>
+      </div>
+    </div>
 
-    <div class="tool"><a href="./ansible-security/">Ansible Security Analyzer</a></div>
-    <div class="tool"><a href="./iam/">IAM Policy Analyzer</a></div>
-    <div class="tool"><a href="./permission/">Permission Risk Analyzer</a></div>
-    <div class="tool"><a href="./policy/">Policy Validator</a></div>
-    <div class="tool"><a href="./secrets/">Secrets Management Inspector</a></div>
-    <div class="tool"><a href="./tf-security/">Terraform Security Scanner</a></div>
+
+<div class="editor-split">
+  <div class="pane-left">
+    <div class="pane-head">
+      <span>// Paste Terraform HCL (.tf)</span>
+      <span id="lineCount">0 lines</span>
+    </div>
+    <textarea class="hcl-textarea" id="hclInput" spellcheck="false"></textarea>
+  </div>
+  <div class="pane-right">
+    <div class="pane-head"><span>// Security findings</span></div>
+    <div id="resultsPane">
+      <div class="idle-msg">
+        <span style="font-size:28px;opacity:0.1;">&#9632;</span>
+        <span>Paste Terraform HCL and click<br>Scan IaC Security</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="action-bar">
+  <button class="btn-scan" id="scanBtn">Scan IaC Security</button>
+  <button class="btn-sm btn-ghost" id="clearBtn2">Reset</button>
+  <span id="statusMsg" style="font-family:var(--mono);font-size:11px;color:var(--text-dim);"></span>
+</div>
+
 
   </div>
 
-  <!-- SEO LONG TAIL -->
-  <h2>Common IaC Security Queries</h2>
+  <hr class="divider">
 
-  <ul>
-    <li>terraform security best practices and common mistakes</li>
-    <li>how to audit iam policies in aws</li>
-    <li>detect overly permissive roles cloud security</li>
-    <li>secrets management in devops best practices</li>
-    <li>ansible security vulnerabilities and fixes</li>
-    <li>how to secure infrastructure as code pipelines</li>
-    <li>prevent privilege escalation in cloud iam</li>
-  </ul>
+  <!-- IaC TOOLS TABLE -->
 
-  <p>
-    These tools are essential for securing cloud environments, enforcing compliance,
-    and preventing configuration drift in modern DevOps pipelines.
-  </p>
+  <section class="content-section">
+    <div class="sec-head">
+      <span class="sec-label">IaC security tools comparison</span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="tools-table">
+      <div class="tt-row tt-head">
+        <div class="tt-cell">Tool</div>
+        <div class="tt-cell">Type</div>
+        <div class="tt-cell">Supports</div>
+        <div class="tt-cell">Pricing</div>
+      </div>
+      <div class="tt-row">
+        <div class="tt-cell tt-name">Checkov</div>
+        <div class="tt-cell" style="color:var(--text-muted)">Static</div>
+        <div class="tt-cell">Terraform, CloudFormation, Kubernetes, Helm, ARM, Bicep, Dockerfile</div>
+        <div class="tt-cell"><span class="badge b-free">Free</span></div>
+      </div>
+      <div class="tt-row">
+        <div class="tt-cell tt-name">tfsec</div>
+        <div class="tt-cell" style="color:var(--text-muted)">Static</div>
+        <div class="tt-cell">Terraform only — very fast, deep Terraform-specific rules</div>
+        <div class="tt-cell"><span class="badge b-free">Free</span></div>
+      </div>
+      <div class="tt-row">
+        <div class="tt-cell tt-name">Trivy</div>
+        <div class="tt-cell" style="color:var(--text-muted)">Multi</div>
+        <div class="tt-cell">IaC, container images, SBOMs, filesystem, git repos</div>
+        <div class="tt-cell"><span class="badge b-free">Free</span></div>
+      </div>
+      <div class="tt-row">
+        <div class="tt-cell tt-name">Terrascan</div>
+        <div class="tt-cell" style="color:var(--text-muted)">Static</div>
+        <div class="tt-cell">Terraform, Kubernetes, Helm, CloudFormation, Docker</div>
+        <div class="tt-cell"><span class="badge b-free">Free</span></div>
+      </div>
+      <div class="tt-row">
+        <div class="tt-cell tt-name">KICS</div>
+        <div class="tt-cell" style="color:var(--text-muted)">Static</div>
+        <div class="tt-cell">15+ IaC frameworks, 2000+ queries</div>
+        <div class="tt-cell"><span class="badge b-free">Free</span></div>
+      </div>
+      <div class="tt-row">
+        <div class="tt-cell tt-name">Snyk IaC</div>
+        <div class="tt-cell" style="color:var(--text-muted)">Static</div>
+        <div class="tt-cell">Terraform, CloudFormation, Kubernetes, ARM — CI/CD integration</div>
+        <div class="tt-cell"><span class="badge b-both">Free + Paid</span></div>
+      </div>
+      <div class="tt-row">
+        <div class="tt-cell tt-name">Prisma Cloud</div>
+        <div class="tt-cell" style="color:var(--text-muted)">CSPM</div>
+        <div class="tt-cell">IaC + runtime cloud security, compliance reporting</div>
+        <div class="tt-cell"><span class="badge b-paid">Paid</span></div>
+      </div>
+    </div>
+  </section>
 
-  <!-- snippet SEO -->
-  <pre>
-{
-  "Effect": "Allow",
-  "Action": "*",
-  "Resource": "*"
+  <!-- GUIDE -->
+
+  <section class="content-section">
+    <div class="sec-head">
+      <span class="sec-label">IaC security best practices</span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="dense-block">
+      <p><strong>Shift-left IaC security — scan before deploy</strong><br>
+      Run Checkov as a pre-commit hook with the <code>pre-commit</code> framework: add <code>checkov -d .</code> to run on every commit. Add it to GitHub Actions to block PRs with HIGH severity misconfigurations. The goal is catching issues at commit time — not in production audit reports. Command: <code>checkov -d ./infrastructure --check CKV_AWS_* --soft-fail-on MEDIUM</code>. This runs all AWS checks and fails hard on HIGH/CRITICAL, soft-fails on MEDIUM.</p>
+      <p><strong>The most dangerous IaC misconfiguration: IAM Action:* Resource:*</strong><br>
+      An IAM policy with <code>"Action": "*"</code> and <code>"Resource": "*"</code> grants god-mode access to the entire AWS account. This is the most common finding in cloud security breaches. Principle of least privilege: list only the specific actions and resources each role needs. Use AWS-managed policies as a starting point, then scope down. For EC2 instance roles, limit to the specific S3 bucket and DynamoDB table the application uses — not all S3 and all DynamoDB.</p>
+      <p><strong>Security group 0.0.0.0/0 on SSH (port 22) and RDP (port 3389)</strong><br>
+      Opening SSH or RDP to the entire internet exposes your instance to brute force attacks and zero-days. Instead: use AWS Systems Manager Session Manager for shell access (no port 22 needed), or restrict to specific CIDR blocks (your office IP, VPN IP). For databases: never expose port 3306 (MySQL), 5432 (PostgreSQL), 6379 (Redis) to the internet — databases should only accept connections from application security groups within the same VPC.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+
+  <section class="content-section">
+    <div class="sec-head">
+      <span class="sec-label">FAQ — IaC security tools</span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What are the best IaC security tools?<span class="faq-arrow">&#9660;</span></button>
+        <div class="faq-a"><strong>Free:</strong> Checkov (broadest IaC support, 1000+ policies, CI/CD ready), tfsec (Terraform-only, fastest), Trivy (multi-purpose including IaC), KICS (2000+ queries). <strong>Freemium:</strong> Snyk IaC (great CI/CD integration, fix suggestions). <strong>Enterprise:</strong> Prisma Cloud, Orca Security (agentless). For most teams: Checkov in CI/CD as a GitHub Action, plus tfsec as a pre-commit hook gives excellent coverage at zero cost. Run: <code>checkov -d . --framework terraform</code>.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What does IaC security scanning check?<span class="faq-arrow">&#9660;</span></button>
+        <div class="faq-a">IaC security scanners check for misconfigurations in infrastructure code before deployment: open security groups (SSH/RDP to 0.0.0.0/0), overly permissive IAM policies (Action:*, Resource:*), public S3 buckets, unencrypted storage (EBS, RDS, S3), hardcoded credentials, missing logging (CloudTrail, VPC Flow Logs), publicly accessible databases, missing MFA delete on S3, unencrypted data in transit (HTTP endpoints), and hundreds of cloud provider-specific checks against CIS Benchmarks and compliance frameworks (SOC2, PCI-DSS, HIPAA).</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How do I add IaC security scanning to CI/CD?<span class="faq-arrow">&#9660;</span></button>
+        <div class="faq-a">GitHub Actions with Checkov: add a step <code>uses: bridgecrewio/checkov-action@master</code> with <code>directory: .</code>. This runs on every PR and fails if HIGH severity issues are found. For tfsec: <code>uses: aquasecurity/tfsec-action@v1.0.0</code>. For Trivy IaC: <code>trivy config --exit-code 1 --severity HIGH,CRITICAL ./</code>. Best practice: run fast scanners (tfsec) as pre-commit hooks and comprehensive scanners (Checkov) in CI/CD to balance speed with coverage.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="sec-head">
+      <span class="sec-label">IaC security tools</span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="subtools-grid">
+      <a href="tf-security/" class="stl"><p class="stl-eye">terraform //</p><span class="stl-name">Terraform Security Scanner</span></a>
+      <a href="iam/" class="stl"><p class="stl-eye">iam //</p><span class="stl-name">IAM Policy Analyzer</span></a>
+      <a href="permission/" class="stl"><p class="stl-eye">perms //</p><span class="stl-name">Permission Risk Analyzer</span></a>
+      <a href="secrets/" class="stl"><p class="stl-eye">secrets //</p><span class="stl-name">Secrets Management Inspector</span></a>
+      <a href="policy/" class="stl"><p class="stl-eye">policy //</p><span class="stl-name">Policy Validator</span></a>
+      <a href="ansible-security/" class="stl"><p class="stl-eye">ansible //</p><span class="stl-name">Ansible Security Analyzer</span></a>
+    </div>
+  </section>
+
+  <div class="tag-cloud">
+    <span class="tag">iac security tools</span>
+    <span class="tag">terraform security scanner</span>
+    <span class="tag">checkov tfsec</span>
+    <span class="tag">iac scanning tools</span>
+    <span class="tag">terraform misconfiguration</span>
+    <span class="tag">iam security terraform</span>
+    <span class="tag">s3 bucket security</span>
+    <span class="tag">infrastructure as code security</span>
+    <span class="tag">iac security best practices</span>
+    <span class="tag">terraform security checklist</span>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <p>iac-security-tools &middot; terraform scanner &middot; checkov &middot; tfsec &middot; free</p>
+    <p>iam &middot; s3 &middot; encryption &middot; misconfigurations &middot; github pages</p>
+  </div>
+</footer>
+
+<script>
+var RULES = [
+  {
+    level: 'critical',
+    title: 'IAM policy with Action:* and Resource:* (god-mode access)',
+    check: function(src) {
+      if (/["']Action["']\s*[:=]\s*["']\s*\*\s*["']/.test(src) && /["']Resource["']\s*[:=]\s*["']\s*\*\s*["']/.test(src)) {
+        return 'IAM policy grants all actions on all resources. This is the most dangerous misconfiguration — grants god-mode access to the account. Apply principle of least privilege: list only required actions and specific resource ARNs.';
+      }
+      return null;
+    }
+  },
+  {
+    level: 'critical',
+    title: 'Security group allows SSH (port 22) from 0.0.0.0/0',
+    check: function(src) {
+      if (/from_port\s*=\s*22/.test(src) && /cidr_blocks\s*=\s*\[?"0\.0\.0\.0\/0"/.test(src)) {
+        return 'SSH port 22 is open to the entire internet (0.0.0.0/0). Use AWS Systems Manager Session Manager instead (no port 22 needed), or restrict to specific CIDR blocks (VPN/office IP).';
+      }
+      return null;
+    }
+  },
+  {
+    level: 'critical',
+    title: 'Security group allows RDP (port 3389) from 0.0.0.0/0',
+    check: function(src) {
+      if (/from_port\s*=\s*3389/.test(src) && /cidr_blocks\s*=\s*\[?"0\.0\.0\.0\/0"/.test(src)) {
+        return 'RDP port 3389 open to internet. Restrict to specific CIDR blocks or use AWS SSM Session Manager. Exposed RDP is a top attack vector.';
+      }
+      return null;
+    }
+  },
+  {
+    level: 'critical',
+    title: 'S3 bucket with public access enabled',
+    check: function(src) {
+      if (/block_public_acls\s*=\s*false/.test(src) || /block_public_policy\s*=\s*false/.test(src) || /ignore_public_acls\s*=\s*false/.test(src)) {
+        return 'S3 bucket has public access enabled. Unless this is an intentional public website/CDN bucket, set block_public_acls = true, block_public_policy = true, ignore_public_acls = true, restrict_public_buckets = true.';
+      }
+      return null;
+    }
+  },
+  {
+    level: 'high',
+    title: 'Database port open to 0.0.0.0/0',
+    check: function(src) {
+      var dbPorts = [3306, 5432, 1433, 27017, 6379, 9200];
+      for (var i = 0; i < dbPorts.length; i++) {
+        var portRegex = new RegExp('from_port\\s*=\\s*' + dbPorts[i]);
+        if (portRegex.test(src) && /cidr_blocks\s*=\s*\[?"0\.0\.0\.0\/0"/.test(src)) {
+          return 'Database port ' + dbPorts[i] + ' is open to the internet. Databases should only accept connections from application security groups within the same VPC — never from 0.0.0.0/0.';
+        }
+      }
+      return null;
+    }
+  },
+  {
+    level: 'high',
+    title: 'RDS instance publicly accessible',
+    check: function(src) {
+      if (/resource\s+"aws_db_instance"/.test(src) && /publicly_accessible\s*=\s*true/.test(src)) {
+        return 'RDS instance set to publicly_accessible = true. Databases should not be publicly accessible. Place in a private subnet and access via bastion host or VPN only.';
+      }
+      return null;
+    }
+  },
+  {
+    level: 'high',
+    title: 'Potential hardcoded credentials in HCL',
+    check: function(src) {
+      if (/(?:password|secret|access_key|private_key|api_key)\s*=\s*"[^"]{6,}"/.test(src)) {
+        return 'Possible hardcoded credentials found. Never store secrets in Terraform HCL — use AWS Secrets Manager, SSM Parameter Store, or HashiCorp Vault with data sources. Check for accidental commits.';
+      }
+      return null;
+    }
+  },
+  {
+    level: 'medium',
+    title: 'EBS volume or EC2 root block without encryption',
+    check: function(src) {
+      if (/resource\s+"aws_ebs_volume"/.test(src) && !/encrypted\s*=\s*true/.test(src)) {
+        return 'EBS volume without encrypted = true. Enable encryption at rest. For new accounts, enable default EBS encryption in AWS settings. Existing unencrypted volumes require snapshot + copy + restore to encrypt.';
+      }
+      return null;
+    }
+  },
+  {
+    level: 'medium',
+    title: 'S3 bucket without server-side encryption',
+    check: function(src) {
+      if (/resource\s+"aws_s3_bucket"/.test(src) && !/aws_s3_bucket_server_side_encryption_configuration/.test(src) && !/server_side_encryption_configuration/.test(src)) {
+        return 'S3 bucket without server-side encryption configuration. Add aws_s3_bucket_server_side_encryption_configuration with AES256 or aws:kms algorithm.';
+      }
+      return null;
+    }
+  },
+  {
+    level: 'medium',
+    title: 'Security group allows all traffic from 0.0.0.0/0',
+    check: function(src) {
+      if (/from_port\s*=\s*0/.test(src) && /to_port\s*=\s*0/.test(src) && /protocol\s*=\s*"-1"/.test(src) && /cidr_blocks\s*=\s*\[?"0\.0\.0\.0\/0"/.test(src)) {
+        return 'Security group allows ALL inbound traffic from anywhere (0.0.0.0/0, protocol -1). This should almost never be necessary. Restrict to specific ports and CIDR blocks.';
+      }
+      return null;
+    }
+  },
+  {
+    level: 'medium',
+    title: 'CloudTrail not enabled or missing',
+    check: function(src) {
+      if (/resource\s+"aws_cloudtrail"/.test(src) && /enable_log_file_validation\s*=\s*false/.test(src)) {
+        return 'CloudTrail log file validation disabled. Enable to detect log tampering: enable_log_file_validation = true.';
+      }
+      return null;
+    }
+  },
+  {
+    level: 'info',
+    title: 'Terraform state backend configuration',
+    check: function(src) {
+      if (/backend\s+"local"/.test(src) || (!/terraform\s*\{/.test(src) || !/(backend|s3|gcs|azurerm)/.test(src))) {
+        if (/resource\s+"aws_/.test(src)) {
+          return 'No remote backend detected. Store Terraform state remotely (S3 + DynamoDB for AWS) to enable team collaboration and prevent state loss. Local state is not suitable for production.';
+        }
+      }
+      return null;
+    }
+  }
+];
+
+function el(tag, cls) {
+  var e = document.createElement(tag);
+  if (cls) e.className = cls;
+  return e;
 }
-  </pre>
+
+function makeFinding(level, title, body) {
+  var lm = { critical: 'f-critical', high: 'f-high', medium: 'f-medium', info: 'f-info', pass: 'f-pass' };
+  var bm = { critical: 'fb-critical', high: 'fb-high', medium: 'fb-medium', info: 'fb-info', pass: 'fb-pass' };
+  var ll = { critical: 'CRITICAL', high: 'HIGH', medium: 'MEDIUM', info: 'INFO', pass: 'PASS' };
+  var card = el('div', 'finding ' + (lm[level] || 'f-info'));
+  var head = el('div', 'f-head');
+  head.appendChild(Object.assign(el('span', 'f-badge ' + (bm[level] || 'fb-info')), { textContent: ll[level] || 'INFO' }));
+  head.appendChild(Object.assign(el('span', 'f-title'), { textContent: title }));
+  card.appendChild(head);
+  if (body) card.appendChild(Object.assign(el('div', 'f-body'), { textContent: body }));
+  return card;
+}
+
+function runScan() {
+  var src    = document.getElementById('hclInput').value;
+  var status = document.getElementById('statusMsg');
+
+  if (!src.trim()) {
+    status.textContent = 'Paste Terraform HCL first.';
+    return;
+  }
+
+  var findings = [];
+  RULES.forEach(function(rule) {
+    var result = rule.check(src);
+    if (result) findings.push({ level: rule.level, title: rule.title, body: result });
+  });
+
+  var critical = findings.filter(function(f) { return f.level === 'critical'; }).length;
+  var high     = findings.filter(function(f) { return f.level === 'high'; }).length;
+  var medium   = findings.filter(function(f) { return f.level === 'medium'; }).length;
+  var info     = findings.filter(function(f) { return f.level === 'info'; }).length;
+
+  var pane = document.getElementById('resultsPane');
+  pane.innerHTML = '';
+
+  var chips = el('div', 'sum-row');
+  function makeChip(val, lbl, color) {
+    var c = el('div', 'sum-chip');
+    var n = Object.assign(el('span', 'sc-val'), { textContent: String(val) });
+    n.style.color = color;
+    var l = Object.assign(el('span', 'sc-lbl'), { textContent: lbl });
+    c.appendChild(n); c.appendChild(l);
+    return c;
+  }
+  chips.appendChild(makeChip(critical, 'Critical', 'var(--red)'));
+  chips.appendChild(makeChip(high,     'High',     'var(--orange)'));
+  chips.appendChild(makeChip(medium,   'Medium',   'var(--yellow)'));
+  chips.appendChild(makeChip(info,     'Info',     'var(--blue)'));
+  pane.appendChild(chips);
+
+  if (findings.length === 0) {
+    pane.appendChild(makeFinding('pass', 'No common IaC misconfigurations detected', 'Passes pattern-based checks. For comprehensive scanning run: checkov -d . --framework terraform'));
+  } else {
+    findings.forEach(function(f) { pane.appendChild(makeFinding(f.level, f.title, f.body)); });
+  }
+
+  status.textContent = critical + ' critical, ' + high + ' high, ' + medium + ' medium.';
+  status.style.color = critical > 0 ? 'var(--red)' : high > 0 ? 'var(--orange)' : medium > 0 ? 'var(--yellow)' : 'var(--iac)';
+}
+
+function loadSample() {
+  var sample = [
+    'resource "aws_security_group" "web" {',
+    '  name = "web-sg"',
+    '',
+    '  ingress {',
+    '    from_port   = 22',
+    '    to_port     = 22',
+    '    protocol    = "tcp"',
+    '    cidr_blocks = ["0.0.0.0/0"]',
+    '  }',
+    '',
+    '  ingress {',
+    '    from_port   = 3306',
+    '    to_port     = 3306',
+    '    protocol    = "tcp"',
+    '    cidr_blocks = ["0.0.0.0/0"]',
+    '  }',
+    '}',
+    '',
+    'resource "aws_iam_role_policy" "app" {',
+    '  policy = jsonencode({',
+    '    Statement = [{',
+    '      Effect   = "Allow"',
+    '      "Action"   = "*"',
+    '      "Resource" = "*"',
+    '    }]',
+    '  })',
+    '}',
+    '',
+    'resource "aws_s3_bucket" "data" {',
+    '  bucket = "my-data-bucket"',
+    '}',
+    '',
+    'resource "aws_s3_bucket_public_access_block" "data" {',
+    '  bucket = aws_s3_bucket.data.id',
+    '  block_public_acls       = false',
+    '  block_public_policy     = false',
+    '}',
+    '',
+    'resource "aws_db_instance" "main" {',
+    '  identifier          = "prod-db"',
+    '  engine              = "mysql"',
+    '  publicly_accessible = true',
+    '  password            = "super-secret-pass123"',
+    '}'
+  ].join('\n');
+
+  document.getElementById('hclInput').value = sample;
+  updateLineCount();
+  runScan();
+}
+
+function clearAll() {
+  document.getElementById('hclInput').value = '';
+  document.getElementById('lineCount').textContent = '0 lines';
+  document.getElementById('statusMsg').textContent = '';
+  var pane = document.getElementById('resultsPane');
+  pane.innerHTML = '';
+  var idle = el('div', 'idle-msg');
+  var icon = Object.assign(el('span'), { textContent: '\u25a0' });
+  icon.style.cssText = 'font-size:28px;opacity:0.1;';
+  var hint = Object.assign(el('span'), { textContent: 'Paste Terraform HCL and click\nScan IaC Security' });
+  idle.appendChild(icon); idle.appendChild(hint);
+  pane.appendChild(idle);
+}
+
+function updateLineCount() {
+  var v = document.getElementById('hclInput').value;
+  document.getElementById('lineCount').textContent = (v ? v.split('\n').length : 0) + ' lines';
+}
+
+function toggleFaq(btn) {
+  btn.parentElement.classList.toggle('open');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('hclInput').placeholder = 'Paste Terraform HCL here (.tf files)...';
+  document.getElementById('scanBtn').addEventListener('click', runScan);
+  document.getElementById('sampleBtn').addEventListener('click', loadSample);
+  document.getElementById('clearBtn').addEventListener('click', clearAll);
+  document.getElementById('clearBtn2').addEventListener('click', clearAll);
+  document.getElementById('hclInput').addEventListener('input', updateLineCount);
+});
+</script>
 
 </body>
 </html>
